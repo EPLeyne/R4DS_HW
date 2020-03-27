@@ -108,3 +108,104 @@ ggplot(data = mpg) +
 ggplot(data = mpg) +
   geom_smooth(mapping = aes(x = displ, y = hwy, linetype = drv))
 
+ggplot(data = mpg) +
+  geom_smooth(mapping = aes(x = displ, y = hwy, linetype = drv, colour = drv)) +
+  geom_point((mapping = aes(x = displ, y = hwy, colour = drv)))
+
+ggplot(data = mpg) +
+  geom_smooth(mapping = aes(x = displ, y = hwy, group = drv))
+
+ggplot(data = mpg) +
+  geom_smooth(mapping = aes(x = displ, y = hwy, colour = drv),
+              show.legend = FALSE)
+
+ggplot(data = mpg) +
+  geom_point(mapping = aes(x = displ, y = hwy)) +
+  geom_smooth(mapping = aes(x = displ, y = hwy))
+
+ggplot(data = mpg, mapping = aes(x = displ, y = hwy)) + #Same as above
+  geom_point() +
+  geom_smooth()
+
+ggplot(data = mpg, mapping = aes(x = displ, y = hwy)) +
+  geom_point(mapping = aes(colour = class)) +
+  geom_smooth()
+
+ggplot(data = mpg, mapping = aes(x = displ, y = hwy)) +
+  geom_point(mapping = aes(colour = class)) +
+  geom_smooth(data = filter(mpg, class == 'subcompact'), #Makes the curve only for the subcompact
+              se = FALSE)                                #Removes the se bars
+
+#EXERCISES p20
+# 1.
+# ggplot(data = mpg) +
+#   geom_line()
+# ggplot(data = mpg) +
+#   geom_boxplot()
+# ggplot(data = mpg) +
+#   geom_histogram()
+# ggplot(data = mpg) +
+#   geom_area()
+# 
+# 2.
+ggplot(data = mpg, mapping = aes(x = displ, y = hwy, colour = drv)) +
+  geom_point() +
+  geom_smooth(se = FALSE)
+
+#6.
+ggplot(data = mpg, mapping = aes(x = displ, y = hwy)) +
+  geom_point() +
+  geom_smooth(se = FALSE)
+
+ggplot(data = mpg) +
+  geom_point(aes(x = displ, y = hwy)) +
+  geom_smooth(aes(x = displ, y = hwy, group = drv), se = FALSE, show.legend = FALSE)
+
+ggplot(data = mpg, mapping = aes(x = displ, y = hwy, colour = drv)) +
+  geom_point() +
+  geom_smooth(se = FALSE)
+
+ggplot(data = mpg) +
+  geom_point(aes(x = displ, y = hwy, colour = drv)) +
+  geom_smooth(aes(x = displ, y = hwy), se = FALSE)
+
+ggplot(data = mpg) +
+  geom_point(aes(x = displ, y = hwy, colour = drv)) +
+  geom_smooth(aes(x = displ, y = hwy, linetype = drv), se = FALSE)
+
+ggplot(data = mpg) +
+  geom_point(aes(x = displ, y = hwy, colour = drv))
+
+#STATISTICAL TRANSFORMATIONS
+
+diamonds
+
+#Bar plot at count (default)
+ggplot(data = diamonds) +
+  geom_bar(mapping = aes(x = cut))
+
+demo <- tribble(
+  ~a, ~b,
+  'bar_1', 20,
+  'bar_2', 30,
+  'bar_3', 40
+)
+
+ggplot(data = demo) +
+  geom_bar(mapping = aes(x = a, y = b), stat = 'identity')
+
+#Bar plot as proportion 
+
+ggplot(data = diamonds) +
+  geom_bar(mapping = aes(x = cut, y = ..prop.., group = 1))
+
+ggplot(data = diamonds) +
+  stat_summary(
+    mapping = aes(x = cut, y = depth),
+    fun.ymin = min,
+    fun.ymax = max,
+    fun.y = median
+  )
+
+#EXERCISES p26
+#1.
