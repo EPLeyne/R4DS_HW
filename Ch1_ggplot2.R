@@ -209,3 +209,75 @@ ggplot(data = diamonds) +
 
 #EXERCISES p26
 #1.
+ggplot(data = diamonds) +
+  geom_pointrange(mapping = aes(x = cut, y = depth),
+                  stat = 'summary',
+                  fun.ymin = min, 
+                  fun.ymax = max,
+                  fun.y = median)
+
+#2.
+
+ggplot(data = demo) +
+  geom_bar(mapping = aes(x = a))
+ggplot(data = demo) +
+  geom_col(mapping = aes(x = a, y = b))
+
+#5. 
+
+ggplot(data = diamonds) +
+  geom_bar(mapping = aes(x = cut, y = ..prop..))
+
+ggplot(data = diamonds) + 
+  geom_bar(mapping = aes(x = cut, fill = color, y = ..prop..))
+
+# Position Adjustments
+
+ggplot(data = diamonds) +
+  geom_bar(mapping = aes(x = cut, colour = cut))
+
+ggplot(data = diamonds) +
+  geom_bar(mapping = aes(x = cut, fill= cut))
+
+ggplot(data = diamonds) +
+  geom_bar(mapping = aes(x = cut, fill= clarity))
+
+ggplot(data = diamonds,
+  mapping = aes(x = cut, fill = clarity)) +
+  geom_bar(alpha = 1/5, position = 'identity')
+
+ggplot(data = diamonds,
+  mapping = aes(x = cut, colour = clarity)) +
+  geom_bar(fill = NA, position = 'identity')
+
+ggplot(data = diamonds) +
+  geom_bar(mapping = aes(x = cut, fill = clarity),
+           position = 'fill')
+
+ggplot(data = diamonds) +
+  geom_bar(mapping = aes(x = cut, fill = clarity),
+           position = 'dodge')
+
+ggplot(data = mpg) +
+  geom_point(mapping = aes(x = displ, y = hwy),
+               position = 'jitter')
+
+ggplot(data = mpg) +
+  geom_jitter(mapping = aes(x= displ, y = hwy))
+
+#EXERCISES p31
+#1.
+ggplot(data = mpg, mapping = aes(x = cty, y = hwy)) +
+  geom_point()
+
+#3.
+ggplot(data = mpg, mapping = aes(x = cty, y = hwy)) +
+  geom_jitter()
+
+ggplot(data = mpg, mapping = aes(x = cty, y = hwy)) +
+  geom_count()
+
+#4.
+ggplot(data = mpg, mapping = aes(x = class, y = hwy)) +
+    geom_boxplot()
+
