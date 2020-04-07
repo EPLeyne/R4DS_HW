@@ -2,6 +2,7 @@
 
 library(tidyverse)
 library(nycflights13)
+library(Lahman)
 
 #Filter
 
@@ -119,3 +120,124 @@ row_number(y)
 dense_rank(y)
 percent_rank(y)
 cume_dist(y)
+
+# EXERCISES p58
+#1.
+transmute(flights, dep_time_min_since_midnight = ((dep_time %/% 100)*60) + (dep_time %% 100))
+transmute(flights, sched_dep_time_min_since_midnight = ((sched_dep_time %/% 100)*60) + (sched_dep_time %% 100))
+
+#2.
+flights_bit <- flights %>% 
+  select(air_time, arr_time, dep_time) %>% 
+  mutate(calc_timings = arr_time - dep_time) %>% 
+  mutate(diff = air_time - calc_timings) %>% 
+  filter(calc_timings != 0)
+
+#3.
+flight_delayed <- flights %>% 
+  select(dep_time, sched_dep_time, dep_delay) %>% 
+  mutate(calc_dep_time = sched_dep_time + dep_delay) %>% 
+  mutate(diff = calc_dep_time - dep_time) %>% 
+  filter(diff != 0)
+
+#4.
+delays <- mutate(flights, delay_ranking = min_rank(flights$dep_delay)) %>% 
+  arrange(desc(delay_ranking))
+
+#5.
+1:3 + 1:10
+
+# summarise()
+
+summarise(flights, delay = mean(dep_delay, na.rm = TRUE))
+
+by_day <- group_by(flights, year, month, day)
+summarise(by_day, delay = mean(dep_delay, na.rm = TRUE))
+
+by_dest <- group_by(flights, dest)
+delay <- summarise(by_dest, count = n(),
+                   dist = mean(distance, na.rm = TRUE))
+delay <- filter(delay, count > 20, dest != 'HNL')
+
+ggplot(data = delay, mapping = aes(x = dist, y = delay)) +
+  geom_point(aes(size = count), alpha = 1/3) +
+  geom_smooth(se = FALSE)
+
+delays <- flights %>% 
+  group_by(dest) %>% 
+  summarise(count = n(),
+            dist = mean(distance, na.rm = TRUE),
+            delay = mean(arr_delay, na.rm = TRUE)) %>% 
+  filter(count > 20, dest != 'HNL')
+
+flights %>% 
+  group_by(year, month, day) %>% 
+  summarise(mean = mean(dep_delay, na.rm = TRUE))
+
+not_cancelled <- flights %>% 
+  filter(!is.na(dep_delay))
+
+not_cancelled %>% 
+  group_by(year, month, day) %>% 
+  summarise(mean = mean(dep_delay))
+
+delays <- not_cancelled %>% 
+  group_by(tailnum) %>% 
+  summarise(delay = mean(arr_delay))
+ggplot(data = delays, mapping = aes(x = delay)) +
+  geom_freqpoly(binwidth = 10)
+
+delays <- not_cancelled %>% 
+  group_by(tailnum) %>% 
+  summarise(delay = mean(arr_delay, na.rm = TRUE), n = n())
+ggplot(data = delays, mapping = aes(x = n, y = delay)) +
+  geom_point(alpha = 1/10)
+
+delays %>% 
+  filter(n > 25) %>% 
+  ggplot(mapping = aes(x = n, y = delay)) +
+  geom_point(alpha = 1/10)
+
+batting <- as_tibble(Lahman::Batting)
+
+batters <- batting %>% 
+  group_by(playerID) %>% 
+  summarise(
+    ba = sum(H, na.rm = TRUE) / sum(AB, na.rm = TRUE),
+    ab = sum(AB, na.rm = TRUE))
+
+batters %>% 
+  filter(ab > 100) %>% 
+  ggplot(mapping = aes(x = ab, y = ba)) +
+  geom_point() +
+  geom_smooth(se = FALSE)
+
+batters %>% 
+  arrange(desc(ba))
+
+not_cancelled %>% 
+  group_by(year, month, day) %>% 
+  summarise(
+    #average delay
+    avg_delay1 = mean(arr_delay, na.rm = TRUE),
+    # average positive delay
+    avg_delay2 = mean(arr_delay[arr_delay > 0], na.rm = TRUE)
+  )
+
+not_cancelled %>% 
+  group_by(dest) %>% 
+  summarise(distance_sd = sd(distance)) %>% 
+  arrange(desc(distance_sd))
+
+not_cancelled %>% 
+  group_by(year, month, day) %>% 
+  summarise(
+    first_dep = first(dep_time),
+    last_dep = last(dep_time)
+  )
+
+not_cancelled %>% 
+  group_by(year, month, day) %>% 
+  mutate(r = min_rank(desc(dep_time))) %>% 
+    filter(r %in% range(r))
+
